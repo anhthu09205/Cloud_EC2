@@ -1,1 +1,3 @@
 relational-database-server/data/
+object-storage-server/data/*
+!object-storage-server/data/.gitkeep
