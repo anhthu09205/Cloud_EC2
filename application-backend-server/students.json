@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Nguyễn Văn An",
+    "major": "Khoa học máy tính",
+    "gpa": 3.6
+  },
+  {
+    "id": 2,
+    "name": "Trần Thị Bích",
+    "major": "Công nghệ thông tin",
+    "gpa": 3.8
+  },
+  {
+    "id": 3,
+    "name": "Lê Văn Cường",
+    "major": "Kỹ thuật phần mềm",
+    "gpa": 3.5
+  },
+  {
+    "id": 4,
+    "name": "Phạm Thị Dung",
+    "major": "An toàn thông tin",
+    "gpa": 3.7
+  },
+  {
+    "id": 5,
+    "name": "Hoàng Văn Em",
+    "major": "Khoa học dữ liệu",
+    "gpa": 3.9
+  }
+]

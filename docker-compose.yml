@@ -1,0 +1,183 @@
+networks:
+  cloud-net:
+    name: cloud-net
+
+services:
+
+  web-frontend-server:
+    build: ./web-frontend-server
+    image: ngthu/web:dev
+    container_name: web-frontend-server
+    networks: 
+      cloud-net:
+        aliases:
+          - web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web-frontend-server/html:/usr/share/nginx/html
+    restart: unless-stopped
+
+  application-backend-server:
+    build: ./application-backend-server
+    image: ngthu/app:dev
+    container_name: application-backend-server
+    networks: 
+      cloud-net:
+        aliases:
+          - app-server
+    ports:
+      - "8085:8081"
+    environment:
+      OIDC_ISSUER: "http://authentication-identity-server:8080/realms/realm_523H0100"
+      OIDC_AUDIENCE: "account"
+    depends_on:
+      - relational-database-server
+    restart: unless-stopped
+
+  relational-database-server:
+    image: mariadb:11
+    container_name: relational-database-server
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: minicloud
+    volumes:
+      - ./relational-database-server/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "3306:3306"
+    networks: 
+      cloud-net:
+        aliases:
+          - db
+    restart: unless-stopped
+
+  authentication-identity-server:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: authentication-identity-server
+    command: ["start-dev"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+      # KC_HOSTNAME: "authentication-identity-server"
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY: edge
+    volumes:
+      - ./authentication-identity-server/data:/opt/keycloak/data
+    ports:
+      - "8081:8080"
+    networks:
+      cloud-net:
+        aliases:
+          - keycloak
+    restart: unless-stopped
+
+  object-storage-server:
+    image: minio/minio
+    container_name: object-storage-server
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./object-storage-server/data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks: 
+      cloud-net:
+        aliases:
+          - minio
+    restart: unless-stopped
+
+  internal-dns-server:
+    image: internetsystemsconsortium/bind9:9.18
+    platform: linux/amd64
+    container_name: internal-dns-server
+    ports:
+      - "1053:53/udp"
+    volumes:
+      - ./internal-dns-server/named.conf.options:/etc/bind/named.conf.options:ro
+      - ./internal-dns-server/named.conf.local:/etc/bind/named.conf.local:ro
+      - ./internal-dns-server/db.cloud.local:/etc/bind/db.cloud.local:ro
+      - ./internal-dns-server/named.conf:/etc/bind/named.conf:ro
+    networks: 
+      cloud-net:
+        aliases:
+          - dns-server
+    restart: unless-stopped
+
+  monitoring-node-exporter-server:
+    image: prom/node-exporter:latest
+    container_name: monitoring-node-exporter-server
+    ports:
+      - "9100:9100"
+    networks: 
+      cloud-net:
+        aliases:
+          - node-exporter
+    restart: unless-stopped
+
+  monitoring-prometheus-server:
+    image: prom/prometheus:latest
+    container_name: monitoring-prometheus-server
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring-prometheus-server/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks: 
+      cloud-net:
+        aliases:
+          - prometheus
+    depends_on:
+      - monitoring-node-exporter-server
+    restart: unless-stopped
+
+  monitoring-grafana-dashboard-server:
+    image: grafana/grafana:latest
+    container_name: monitoring-grafana-dashboard-server
+    ports:
+      - "3000:3000"
+    networks: 
+      cloud-net:
+        aliases:
+          - grafana
+    depends_on:
+      - monitoring-prometheus-server
+    restart: unless-stopped
+
+  api-gateway-proxy-server:
+    image: nginx:stable
+    container_name: api-gateway-proxy-server
+    depends_on:
+      - web-frontend-server1
+      - web-frontend-server2
+      - web-frontend-server
+      - application-backend-server
+      - authentication-identity-server
+    ports:
+      - "80:80"
+    volumes:
+      - ./api-gateway-proxy-server/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks: 
+      cloud-net:
+        aliases:
+          - gateway
+    restart: unless-stopped
+
+# extend
+  web-frontend-server1:
+    image: nginx:alpine
+    container_name: web-frontend-server1
+    volumes:
+      - ./web-frontend-server1/html:/usr/share/nginx/html
+    networks:
+      - cloud-net
+
+  web-frontend-server2:
+    image: nginx:alpine
+    container_name: web-frontend-server2
+    volumes:
+      - ./web-frontend-server2/html:/usr/share/nginx/html
+    networks:
+      - cloud-net

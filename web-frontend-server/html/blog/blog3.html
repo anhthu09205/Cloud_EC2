@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Japanese Cuisine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary: #a1a1a6;
+      --accent: #0071e3;
+      --border: rgba(0, 0, 0, 0.08);
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 52px;
+      background: rgba(245, 245, 247, 0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: gap 0.2s ease;
+    }
+
+    .nav-back:hover {
+      gap: 8px;
+    }
+
+    .nav-back svg {
+      transition: transform 0.2s ease;
+    }
+
+    .nav-back:hover svg {
+      transform: translateX(-2px);
+    }
+
+    /* ── Hero image ── */
+    .hero-img {
+      width: 100%;
+      height: min(60vh, 540px);
+      overflow: hidden;
+      position: relative;
+      opacity: 0;
+      animation: fadeIn 0.8s ease forwards 0.1s;
+    }
+
+    .hero-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      display: block;
+      transform: scale(1.04);
+      animation: zoomOut 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards 0.1s;
+    }
+
+    .hero-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 55%, rgba(0, 0, 0, 0.28) 100%);
+    }
+
+    /* ── Article container ── */
+    article {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 56px 40px 100px;
+    }
+
+    /* ── Meta ── */
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.6s ease forwards 0.3s;
+    }
+
+    .meta-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(0, 113, 227, 0.08);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .meta-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+    }
+
+    .meta-date {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      letter-spacing: -0.1px;
+    }
+
+    /* ── Title ── */
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: fadeUp 0.7s ease forwards 0.4s;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    /* ── Lead ── */
+    .lead {
+      font-size: 20px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      font-weight: 300;
+      letter-spacing: -0.2px;
+      border-left: 2px solid var(--accent);
+      padding-left: 20px;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.6s ease forwards 0.55s;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 48px;
+      height: 2px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    /* ── Body content ── */
+    .content {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.6s ease forwards 0.65s;
+    }
+
+    .content p {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--text-primary);
+      letter-spacing: -0.1px;
+      margin-bottom: 24px;
+    }
+
+    .content h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.6px;
+      color: var(--text-primary);
+      margin: 48px 0 16px;
+      line-height: 1.2;
+    }
+
+    /* ── Places grid ── */
+    .places {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 24px 0 40px;
+    }
+
+    .place-card {
+      background: var(--surface);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.07), 0 0 0 0.5px var(--border);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.3s ease;
+    }
+
+    .place-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12), 0 0 0 0.5px var(--border);
+    }
+
+    .place-img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .place-card:hover .place-img {
+      transform: scale(1.05);
+    }
+
+    .place-img-wrap {
+      overflow: hidden;
+    }
+
+    .place-info {
+      padding: 12px 14px 14px;
+    }
+
+    .place-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.2px;
+      margin-bottom: 3px;
+    }
+
+    .place-sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      letter-spacing: -0.1px;
+    }
+
+    /* ── Pull quote ── */
+    blockquote {
+      margin: 40px 0;
+      padding: 28px 32px;
+      background: var(--surface);
+      border-radius: 16px;
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.06), 0 0 0 0.5px var(--border);
+      position: relative;
+    }
+
+    blockquote::before {
+      content: '"';
+      font-family: var(--font-display);
+      font-size: 80px;
+      color: rgba(0, 113, 227, 0.12);
+      position: absolute;
+      top: 4px;
+      left: 20px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    blockquote p {
+      font-family: var(--font-display);
+      font-size: 20px !important;
+      font-style: italic;
+      line-height: 1.5 !important;
+      color: var(--text-secondary) !important;
+      letter-spacing: -0.2px;
+      margin: 0 !important;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 32px 40px;
+      border-top: 0.5px solid var(--border);
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes zoomOut {
+      to {
+        transform: scale(1);
+      }
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      nav {
+        padding: 0 20px;
+      }
+
+      article {
+        padding: 40px 20px 80px;
+      }
+
+      .places {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero-img {
+        height: 260px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a class="nav-logo" href="/">MyMiniCloud</a>
+    <a class="nav-back" href="/blog/">
+
+      All Blogs
+    </a>
+  </nav>
+
+  <!-- Hero image -->
+  <div class="hero-img">
+    <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&q=90&auto=format&fit=crop"
+      alt="Japanese food">
+  </div>
+
+  <article>
+
+    <!-- Meta -->
+    <div class="meta">
+      <span class="meta-tag">Food</span>
+      <span class="meta-dot"></span>
+      <span class="meta-date">April 2026 · 5 min read</span>
+    </div>
+
+    <!-- Title -->
+    <h1>Japanese<br><em>Cuisine</em></h1>
+
+    <p class="lead">
+      A harmony of taste, texture, and visual beauty — where every dish tells a story.
+    </p>
+    <!-- Lead -->
+    <p class="lead">A land where every valley holds a postcard, and time moves at the rhythm of cowbells and mountain
+      wind.</p>
+
+    <div class="divider"></div>
+
+    <!-- Body -->
+    <div class="content">
+      <p>
+        Japanese cuisine is known for its balance, freshness, and elegant presentation. Each dish is carefully prepared
+        to highlight natural flavors.
+      </p>
+
+      <p>
+        From sushi to ramen, every meal reflects Japanese culture, discipline, and attention to detail.
+      </p>
+
+      <blockquote>
+        <p>Food in Japan is not just nourishment — it is an art form.</p>
+      </blockquote>
+
+      <h2>Popular Dishes</h2>
+
+      <div class="places">
+
+        <div class="place-card">
+          <div class="place-img-wrap">
+            <img class="place-img"
+              src="https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80&auto=format&fit=crop">
+          </div>
+          <div class="place-info">
+            <div class="place-name">Sushi</div>
+            <div class="place-sub">Fresh & minimal</div>
+          </div>
+        </div>
+
+        <div class="place-card">
+          <div class="place-img-wrap">
+            <img class="place-img"
+              src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500&q=80&auto=format&fit=crop">
+          </div>
+          <div class="place-info">
+            <div class="place-name">Ramen</div>
+            <div class="place-sub">Rich & comforting</div>
+          </div>
+        </div>
+
+        <div class="place-card">
+          <div class="place-img-wrap">
+            <img class="place-img"
+              src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80&auto=format&fit=crop">
+          </div>
+          <div class="place-info">
+            <div class="place-name">Bento</div>
+            <div class="place-sub">Balanced meal box</div>
+          </div>
+        </div>
+
+      </div>
+
+      <p>
+        The beauty of Japanese cuisine lies in its simplicity — allowing each ingredient to shine naturally.
+      </p>
+    </div>
+  </article>
+
+  <footer>
+    <p>© 2026 My Blog</p>
+  </footer>
+
+</body>
+
+</html>

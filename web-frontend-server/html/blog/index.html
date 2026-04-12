@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Blog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f5f7;
+      --surface: rgba(255, 255, 255, 0.72);
+      --surface-hover: rgba(255, 255, 255, 0.92);
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary: #a1a1a6;
+      --accent: #0071e3;
+      --border: rgba(0, 0, 0, 0.08);
+      --shadow-card: 0 2px 20px rgba(0, 0, 0, 0.08), 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+      --shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+      --radius: 18px;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 52px;
+      background: rgba(245, 245, 247, 0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      letter-spacing: -0.1px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      padding: 100px 40px 64px;
+      max-width: 980px;
+      margin: 0 auto;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 7vw, 80px);
+      font-weight: 700;
+      line-height: 1.0;
+      letter-spacing: -2px;
+      color: var(--text-primary);
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.7s ease forwards 0.2s;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    .hero-sub {
+      margin-top: 20px;
+      font-size: 19px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      letter-spacing: -0.2px;
+      max-width: 480px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.7s ease forwards 0.35s;
+    }
+
+    /* ── Grid ── */
+    .grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 40px 100px;
+    }
+
+    /* Card base */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.35s ease;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .card:nth-child(1) {
+      animation-delay: 0.5s;
+    }
+
+    .card:nth-child(2) {
+      animation-delay: 0.62s;
+    }
+
+    .card:nth-child(3) {
+      animation-delay: 0.74s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px) scale(1.005);
+      box-shadow: var(--shadow-hover);
+      background: var(--surface-hover);
+    }
+
+    /* Layout spans */
+    .card-featured {
+      grid-column: span 7;
+      min-height: 420px;
+    }
+
+    .card-side {
+      grid-column: span 5;
+      min-height: 420px;
+    }
+
+    .card-wide {
+      grid-column: span 12;
+      min-height: 180px;
+      flex-direction: row;
+    }
+
+    /* Card artwork */
+    .card-art {
+      flex-shrink: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .card:hover .card-art img {
+      transform: scale(1.04);
+    }
+
+    .card-featured .card-art,
+    .card-side .card-art {
+      height: 260px;
+    }
+
+    .card-wide .card-art {
+      width: 300px;
+      height: 100%;
+      min-height: 180px;
+    }
+
+    /* Overlay gradient on art for better text separation */
+    .card-art::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.08) 100%);
+      pointer-events: none;
+    }
+
+    /* Card body */
+    .card-body {
+      padding: 24px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-wide .card-body {
+      padding: 28px 32px;
+      justify-content: center;
+    }
+
+    .card-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .card-wide .card-title {
+      font-size: 22px;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: -0.1px;
+      text-decoration: none;
+      transition: gap 0.2s ease;
+    }
+
+    .card:hover .card-link {
+      gap: 8px;
+    }
+
+    .card-link svg {
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover .card-link svg {
+      transform: translateX(2px);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 32px 40px;
+      border-top: 0.5px solid var(--border);
+      font-size: 12px;
+      color: var(--text-tertiary);
+      letter-spacing: -0.1px;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 720px) {
+      nav {
+        padding: 0 20px;
+      }
+
+      .hero {
+        padding: 60px 20px 40px;
+      }
+
+      .grid {
+        padding: 0 20px 60px;
+        gap: 12px;
+      }
+
+      .card-featured,
+      .card-side,
+      .card-wide {
+        grid-column: span 12;
+        min-height: unset;
+        flex-direction: column;
+      }
+
+      .card-wide .card-art {
+        width: 100%;
+        height: 200px;
+        min-height: unset;
+      }
+
+      .card-featured .card-art {
+        height: 200px;
+      }
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 20px;
+      width: 420px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+    }
+
+    .btn-create {
+      background: #0071e3;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 10px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      border: none;
+      color: #6e6e73;
+      cursor: pointer;
+    }
+
+    .modal input,
+    .modal textarea {
+      width: 100%;
+      margin-top: 16px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .modal-content {
+      animation: fadeUp 0.3s ease;
+    }
+
+    .btn-new {
+      margin-top: 24px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn-new:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-create {
+      margin-top: 30px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 20px;
+      background: #0071e3;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .card-wide {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .card-link i {
+      font-size: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover .card-link i {
+      transform: translateX(3px);
+    }
+
+
+    .btn-new {
+      margin-top: 28px;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 10px 16px;
+      border-radius: 999px;
+
+      background: rgba(0, 113, 227, 0.9);
+      color: white;
+
+      border: 0.5px solid rgba(0, 0, 0, 0.05);
+
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: -0.1px;
+
+      cursor: pointer;
+
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+    }
+
+    .btn-new i {
+      font-size: 11px;
+      opacity: 0.95;
+      transition: transform 0.25s ease;
+    }
+
+    /* Hover kiểu Apple */
+    .btn-new:hover {
+      transform: translateY(-1px);
+      background: #0077ed;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Icon animation nhẹ */
+    .btn-new:hover i {
+      transform: rotate(90deg);
+    }
+
+    /* Click feel */
+    .btn-new:active {
+      transform: scale(0.96);
+      box-shadow: none;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      flex: 1;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+
+      word-wrap: break-word;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <nav>
+    <a class="nav-logo" href="/">MyMiniCloud</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog/">Our Blog</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <span class="hero-eyebrow">Personal Journal</span>
+    <h1>Stories &<br><em>Perspectives</em></h1>
+    <p class="hero-sub">
+      Travel, science, and culture - a curated collection of things worth sharing.
+    </p>
+
+    <!-- BUTTON ĐẶT Ở ĐÂY -->
+    <button onclick="location.href='/blog/create.html'" class="btn-new">
+      <i class="fa-solid fa-plus"></i>
+      <span>New Post</span>
+    </button>
+  </section>
+
+
+
+  <main class="grid" id="blogGrid">
+    <!-- Card 1: Featured -->
+    <a class="card card-featured card-1" href="/blog/blog1.html">
+      <div class="card-art">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80&auto=format&fit=crop"
+          alt="Swiss Alps mountain and lake landscape" loading="lazy">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Travel</span>
+        <h2 class="card-title">Travel in Switzerland</h2>
+        <p class="card-desc">Alpine peaks, pristine lakes, and watchmakers' precision — an unforgettable journey through
+          Europe's heartland.</p>
+        <span class="card-link">
+          Read article
+          <i class="fa-solid fa-arrow-right"></i>
+        </span>
+      </div>
+    </a>
+
+    <!-- Card 2: Side -->
+    <a class="card card-side card-2" href="/blog/blog2.html">
+      <div class="card-art">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=700&q=80&auto=format&fit=crop"
+          alt="Circuit board semiconductor technology" loading="lazy">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Technology</span>
+        <h2 class="card-title">Lithography Machine</h2>
+        <p class="card-desc">How extreme ultraviolet light etches the circuits powering every device in your life.</p>
+        <span class="card-link">
+          Read article
+          <i class="fa-solid fa-arrow-right"></i>
+        </span>
+      </div>
+    </a>
+
+    <!-- Card 3: Wide -->
+    <a class="card card-wide card-3" href="/blog/blog3.html">
+      <div class="card-art">
+        <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=700&q=80&auto=format&fit=crop"
+          alt="Japanese sushi omakase" loading="lazy">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Culture · Cuisine</span>
+        <h2 class="card-title">Japanese Cuisine</h2>
+        <p class="card-desc">From centuries-old ramen traditions to the quiet art of omakase — how Japan turned food
+          into philosophy.</p>
+        <span class="card-link">
+          Read article
+          <i class="fa-solid fa-arrow-right"></i>
+        </span>
+        </span>
+      </div>
+    </a>
+
+  </main>
+
+  <footer>
+    <p>© 2026 My Blog · Minicloud</p>
+  </footer>
+
+  <script>
+    /* =========================
+       LOAD BLOG LIST
+    ========================= */
+    async function loadBlogs() {
+      let grid = document.getElementById("blogGrid");
+
+      let res = await fetch("/api/blog?t=" + Date.now(), {
+        cache: "no-store"
+      });
+      let data = await res.json();
+
+
+      data.forEach((b, i) => {
+
+        let type = "card-wide";
+        if (i % 3 === 0) type = "card-featured";
+        else if (i % 3 === 1) type = "card-side";
+
+        grid.insertAdjacentHTML("afterbegin", `
+      <a class="card ${type}" href="/blog/detail.html?id=${b.id}">
+        
+        ${b.hero ? `
+        <div class="card-art">
+          <img src="${b.hero}" 
+              onerror="this.parentElement.style.display='none'">
+        </div>
+        ` : ""}
+
+        <div class="card-body">
+          <span class="card-tag">New</span>
+          <h2 class="card-title">${b.title}</h2>
+          <p class="card-desc">
+          ${b.content
+            ? b.content.replace(/[#*\n]/g, '').trim()
+            : 'No content yet...'
+          }
+          </p>
+          <span class="card-link">
+          Read article
+          <i class="fa-solid fa-arrow-right"></i>
+        </span>
+        </div>
+
+      </a>
+    `);
+      });
+    }
+
+    /* =========================
+       INIT
+    ========================= */
+
+    async function init() {
+      await loadBlogs();
+    }
+
+    init();
+  </script>
+</body>
+
+</html>

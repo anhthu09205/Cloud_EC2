@@ -1,0 +1,17 @@
+$TTL 1H
+$ORIGIN cloud.local.
+
+@   IN SOA  ns.cloud.local. admin.cloud.local. (
+        2       ; Serial
+        1H      ; Refresh
+        15M     ; Retry
+        1W      ; Expire
+        1H )    ; Minimum TTL
+
+    IN NS   ns.cloud.local.
+
+ns  IN A    127.0.0.1
+web-frontend-server IN A 10.10.10.10
+app-backend    IN    A    172.18.0.9
+minio          IN    A    172.18.0.3
+keycloak       IN    A    172.18.0.6

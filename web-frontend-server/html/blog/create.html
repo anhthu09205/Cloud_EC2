@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Create Blog</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: -apple-system, 'SF Pro Text', sans-serif;
+      background: #f5f5f7;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 80px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 15px;
+    }
+
+    textarea {
+      height: 180px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 30px;
+      margin: 10px 0 20px;
+    }
+
+    .radio-item input {
+      width: auto;
+      /* Quan trọng: Ngăn nút radio giãn hết cỡ */
+      margin: 0;
+      /* Xóa margin mặc định */
+      cursor: pointer;
+    }
+
+    /* Căn giữa chữ và nút radio theo trục dọc */
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      line-height: 1;
+      /* Giúp căn hàng chính xác hơn */
+    }
+
+
+
+    button {
+      margin-top: 20px;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 999px;
+      background: #0071e3;
+      color: white;
+      cursor: pointer;
+    }
+
+    input:disabled {
+      opacity: 0.4;
+    }
+
+    .btn-cancel {
+      background: #e5e5ea;
+      color: #1d1d1f;
+    }
+
+    #submitBtn {
+      background: #0071e3;
+      color: white;
+      transition: all 0.2s ease;
+    }
+
+
+    #submitBtn:disabled {
+      background: #e5e5ea;
+      /* xám Apple */
+      color: #9ca3af;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+
+    #submitBtn:not(:disabled):hover {
+      background: #0077ed;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <form class="container" onsubmit="submitBlog(event)">
+
+    <h1 id="formTitle">Create Blog</h1>
+
+    <input id="title" placeholder="Title">
+
+    <!-- HERO -->
+    <p>Hero Image</p>
+
+    <div class="radio-group">
+      <label class="radio-item">
+        <input type="radio" name="imgType" value="url" checked>
+        Image URL
+      </label>
+
+      <label class="radio-item">
+        <input type="radio" name="imgType" value="file">
+        Upload File
+      </label>
+    </div>
+
+    <input id="heroUrl" placeholder="Paste image URL">
+
+    <input type="file" id="heroFile" accept="image/*">
+
+    <!-- CONTENT -->
+    <textarea id="content" placeholder="Write your content here..."></textarea>
+
+
+    <div style="display:flex; gap:10px;">
+      <button id="submitBtn" type="submit" disabled>Publish</button>
+      <button type="button" onclick="goBack()" class="btn-cancel">Cancel</button>
+    </div>
+  </form>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+
+    let oldHero = "";
+
+
+    // ===================
+    // ELEMENTS
+    // ===================
+    const titleEl = document.getElementById("title");
+    const contentEl = document.getElementById("content");
+
+    const heroUrlEl = document.getElementById("heroUrl");
+    const heroFileEl = document.getElementById("heroFile");
+
+    // ===================
+    // MARKDOWN PREVIEW
+    // ===================
+
+
+    // ===================
+    // TOGGLE INPUT
+    // ===================
+    document.querySelectorAll('input[name="imgType"]').forEach(r => {
+      r.addEventListener("change", toggleInput);
+    });
+
+
+
+    function toggleInput() {
+      let type = document.querySelector('input[name="imgType"]:checked').value;
+
+
+      if (type === "url") {
+        heroUrlEl.disabled = false;
+        heroFileEl.disabled = true;
+      } else {
+        heroUrlEl.disabled = true;
+        heroFileEl.disabled = false;
+      }
+    }
+
+    //hanlde empt
+    function validateForm() {
+      const hasTitle = titleEl.value.trim().length > 0;
+      const hasContent = contentEl.value.trim().length > 0;
+
+      submitBtn.disabled = !(hasTitle && hasContent);
+    }
+    titleEl.addEventListener("input", validateForm);
+    contentEl.addEventListener("input", validateForm);
+
+    toggleInput();
+    validateForm();
+
+
+
+    function goBack() {
+      if (confirm("Discard this post?")) {
+        window.location.href = "/blog/";
+      }
+    }
+
+    titleEl.addEventListener("input", validateForm);
+    contentEl.addEventListener("input", validateForm);
+
+    // ===================
+    // FILE → BASE64
+    // ===================
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = err => reject(err);
+      });
+    }
+
+
+    // ===================
+    // NÉN ẢNH
+    // ===================
+    function compressImage(file) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = e => {
+          img.src = e.target.result;
+        };
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          const maxWidth = 1000; 
+          const scale = maxWidth / img.width;
+
+          canvas.width = maxWidth;
+          canvas.height = img.height * scale;
+
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          resolve(canvas.toDataURL("image/jpeg", 0.5));
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ===================
+    // SUBMIT
+    // ===================
+    async function submitBlog(e) {
+      e.preventDefault();
+      if (titleEl.value.trim() === "" || contentEl.value.trim() === "") {
+        alert("Please enter title and content");
+        return;
+      }
+
+      try {
+        let type = document.querySelector('input[name="imgType"]:checked').value;
+        let hero = oldHero;
+
+        // nếu chọn file mới
+        if (type === "file") {
+          let file = heroFileEl.files[0];
+          if (file) {
+            hero = await compressImage(file);
+          }
+        }
+
+        // nếu nhập URL mới
+        if (type === "url" && heroUrlEl.value.trim() !== "") {
+          hero = heroUrlEl.value.trim();
+        }
+
+        console.log("HERO LENGTH:", hero.length); // debug
+
+        const payload = {
+          title: titleEl.value,
+          content: contentEl.value,
+          hero: hero
+        };
+        let res;
+
+
+        if (id) {
+          res = await fetch("/api/blog/" + id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          res = await fetch("/api/blog", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        console.log("API STATUS:", res.status);
+
+        window.location.href = "/blog/";
+
+      } catch (err) {
+        console.error("ERROR:", err);
+        alert("Publish failed");
+
+      }
+    }
+
+
+
+    // ===================
+    // EDIT MODE
+    // ===================
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    if (id) {
+      document.getElementById("formTitle").innerText = "Edit Blog";
+
+      fetch("/api/blog")
+        .then(res => res.json())
+        .then(data => {
+          let b = data.find(x => x.id == id);
+
+          if (!b) return;
+
+          titleEl.value = b.title;
+          contentEl.value = b.content;
+
+          oldHero = b.hero || "";
+
+
+          if (b.hero && b.hero.startsWith("data:image")) {
+            document.querySelector('input[value="file"]').checked = true;
+          } else {
+            document.querySelector('input[value="url"]').checked = true;
+            heroUrlEl.value = b.hero || "";
+          }
+
+
+
+          // 
+          toggleInput();
+          validateForm();
+        });
+    }
+  </script>
+
+</body>
+
+</html>

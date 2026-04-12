@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>MyMiniCloud</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f5f7;
+      --text: #1d1d1f;
+      --sub: #6e6e73;
+      --accent: #0071e3;
+      --border: rgba(0, 0, 0, 0.08);
+      --font-display: 'Playfair Display', serif;
+    }
+
+    body {
+      font-family: -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      padding: 0 40px;
+      height: 52px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(245, 245, 247, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    /* CONTENT */
+    article {
+      max-width: 760px;
+      margin: auto;
+      padding: 80px 20px 100px;
+    }
+
+    /* TITLE */
+    h1 {
+      font-family: var(--font-display);
+      font-size: 56px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .lead {
+      font-size: 20px;
+      color: var(--sub);
+      border-left: 3px solid var(--accent);
+      padding-left: 20px;
+      margin-bottom: 50px;
+    }
+
+    /* PROFILE */
+    .profile {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 40px;
+      align-items: center;
+    }
+
+    .profile img {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .name {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .role {
+      color: var(--sub);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    /* TEXT */
+    .content {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--text);
+      margin-top: 30px;
+    }
+
+    /* BUTTON */
+    .btn {
+      display: inline-block;
+      margin-top: 50px;
+      padding: 12px 26px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* MOBILE */
+    @media(max-width:600px) {
+      h1 {
+        font-size: 40px;
+      }
+
+      .profile {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+
+
+    i {
+      margin-right: 8px;
+    }
+
+    .nav-logo i {
+      color: var(--accent);
+    }
+
+    .role i {
+      color: var(--accent);
+    }
+
+    .btn i {
+      margin-right: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <a href="/" class="nav-logo">
+    <i class="fa-solid fa-cloud"></i> MyMiniCloud
+  </a>
+
+  <article>
+
+    <h1>Meet the<br><em>Creators</em></h1>
+
+    <p class="lead">
+      A mini cloud system built with Docker, combining frontend design and backend architecture.
+    </p>
+
+    <!-- ANH THƯ -->
+    <div class="profile">
+      <img src="https://i.pinimg.com/1200x/ed/62/c4/ed62c4744bb9e06628e30c16546a8cd5.jpg">
+      <div class="profile-info">
+        <div class="name">Nguyen Thi Anh Thu</div>
+        <div class="role">
+          <i class="fa-solid fa-palette"></i>
+          Frontend Developer
+        </div>
+      </div>
+    </div>
+
+    <!-- NHẬT HUY -->
+    <div class="profile">
+      <img src="https://i.pinimg.com/1200x/80/41/85/804185369bb31d52a4c279c6202fca14.jpg">
+      <div class="profile-info">
+        <div class="name">Le Nhat Huy</div>
+        <div class="role">
+          <i class="fa-solid fa-server"></i>
+          Backend Developer
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      This project simulates a cloud platform using containerized services such as Nginx, Flask, MariaDB, Keycloak, and
+      MinIO.
+      It demonstrates how modern cloud systems are structured, connected, and deployed in real environments.
+    </div>
+
+    <a href="/blog/" class="btn">
+      <i class="fa-solid fa-book-open"></i> Visit our Blog
+    </a>
+
+  </article>
+
+</body>
+
+</html>

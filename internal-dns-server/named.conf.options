@@ -1,0 +1,7 @@
+options {
+  directory "/var/cache/bind";
+  allow-query { any; };
+  recursion yes;
+};
+
+include "/etc/bind/named.conf.local";

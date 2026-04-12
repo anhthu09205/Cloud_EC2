@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sinh viên</title>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fb;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #222;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        /* Header */
+        th {
+            background: linear-gradient(135deg, #0071e3, #0055b3);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Body */
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Alignment */
+        td:nth-child(1) {
+            text-align: center;
+        }
+
+        td:nth-child(2),
+        td:nth-child(3) {
+            text-align: left;
+        }
+
+        td:nth-child(4) {
+            text-align: right;
+        }
+
+        /* Hover effect */
+        tr:hover {
+            background: #f0f6ff;
+        }
+
+        /* Zebra */
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        /* Badge GPA */
+        .gpa {
+            font-weight: bold;
+            color: #0071e3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Danh sách sinh viên</h1>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Major</th>
+                <th>GPA</th>
+            </tr>
+
+            {% for s in data %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.major }}</td>
+                <td class="gpa">{{ s.gpa }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+</body>
+
+</html>

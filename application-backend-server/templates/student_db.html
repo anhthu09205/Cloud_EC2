@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students — MyMiniCloud</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blue: #0071e3;
+            --blue-hover: #0077ed;
+            --blue-light: #e8f1fb;
+            --red: #ff3b30;
+            --red-hover: #d70015;
+            --surface: #ffffff;
+            --bg: #f2f2f7;
+            --border: rgba(0, 0, 0, 0.08);
+            --border-strong: rgba(0, 0, 0, 0.14);
+            --text: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --text-tertiary: #aeaeb2;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --radius-xl: 24px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.10);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.18);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── NAV ── */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            background: rgba(242, 242, 247, 0.82);
+            backdrop-filter: saturate(180%) blur(24px);
+            -webkit-backdrop-filter: saturate(180%) blur(24px);
+            border-bottom: 0.5px solid var(--border);
+        }
+
+        .nav-brand {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 0.01em;
+        }
+
+        .nav-brand span {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .nav-badge {
+            background: var(--blue);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 100px;
+            letter-spacing: 0.02em;
+        }
+
+        /* ── PAGE ── */
+        .page {
+            max-width: 940px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* ── ADD CARD ── */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 0.5px solid var(--border);
+            padding: 28px 28px 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .field label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            padding-left: 2px;
+        }
+
+        .field input {
+            padding: 11px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-strong);
+            background: var(--bg);
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text);
+            transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+            -webkit-appearance: none;
+        }
+
+        .field input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: var(--blue);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
+        }
+
+        .btn-add {
+            width: 100%;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 13px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            letter-spacing: -0.01em;
+            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .btn-add:hover {
+            background: var(--blue-hover);
+            box-shadow: 0 4px 18px rgba(0, 113, 227, 0.28);
+        }
+
+        .btn-add:active {
+            transform: scale(0.98);
+        }
+
+        /* ── TABLE CARD ── */
+        .table-card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 0.5px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px 14px;
+            border-bottom: 0.5px solid var(--border);
+        }
+
+        .table-toolbar-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .table-count {
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: var(--bg);
+            padding: 4px 10px;
+            border-radius: 100px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 10px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            background: rgba(242, 242, 247, 0.6);
+            border-bottom: 0.5px solid var(--border);
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            font-size: 14px;
+            border-bottom: 0.5px solid var(--border);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr {
+            transition: background 0.1s;
+        }
+
+        tbody tr:hover {
+            background: rgba(242, 242, 247, 0.5);
+        }
+
+        .cell-id {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .cell-student-id {
+            font-weight: 600;
+            font-size: 13px;
+            font-variant-numeric: tabular-nums;
+            color: var(--blue);
+        }
+
+        .cell-name {
+            font-weight: 500;
+        }
+
+        .cell-dob {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .cell-major {
+            display: inline-flex;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 100px;
+            border: 0.5px solid var(--border-strong);
+        }
+
+        .cell-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-edit,
+        .btn-delete {
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .btn-edit {
+            background: var(--bg);
+            color: var(--text);
+            border: 0.5px solid var(--border-strong);
+        }
+
+        .btn-edit:hover {
+            background: #e5e5ea;
+        }
+
+        .btn-delete {
+            background: rgba(255, 59, 48, 0.09);
+            color: var(--red);
+        }
+
+        .btn-delete:hover {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-edit:active,
+        .btn-delete:active {
+            transform: scale(0.96);
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.35;
+        }
+
+        .empty-text {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .empty-sub {
+            font-size: 13px;
+        }
+
+        /* ── MODAL OVERLAY ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 460px;
+            box-shadow: var(--shadow-lg);
+            padding: 28px;
+            transform: scale(0.96) translateY(12px);
+            opacity: 0;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .modal-student-id {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg);
+            color: var(--text-secondary);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: #e5e5ea;
+            color: var(--text);
+        }
+
+        .modal .form-grid {
+            margin-bottom: 0;
+        }
+
+        .modal .field {
+            margin-bottom: 14px;
+        }
+
+        .modal .field:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 0.5px solid var(--border);
+        }
+
+        .btn-cancel {
+            flex: 1;
+            border: 1px solid var(--border-strong);
+            background: var(--surface);
+            color: var(--text);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-cancel:hover {
+            background: var(--bg);
+        }
+
+        .btn-save {
+            flex: 2;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s, box-shadow 0.15s;
+        }
+
+        .btn-save:hover {
+            background: var(--blue-hover);
+            box-shadow: 0 4px 14px rgba(0, 113, 227, 0.28);
+        }
+
+        /* flatpickr overrides */
+        .flatpickr-calendar {
+            font-family: inherit !important;
+            border-radius: var(--radius-lg) !important;
+            box-shadow: var(--shadow-md) !important;
+        }
+
+        .flatpickr-day.selected {
+            background: var(--blue) !important;
+            border-color: var(--blue) !important;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page {
+                padding: 24px 16px 60px;
+            }
+
+            .page-title {
+                font-size: 26px;
+            }
+
+            .table-card {
+                border-radius: var(--radius-lg);
+                overflow-x: auto;
+            }
+
+            thead th:nth-child(1),
+            tbody td:nth-child(1) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="nav-brand"><span>MyMiniCloud</span> · Students</div>
+        <div class="nav-badge">DB</div>
+    </nav>
+
+    <!-- PAGE -->
+    <main class="page">
+
+        <div class="page-header">
+            <h1 class="page-title">Students Database</h1>
+            <p class="page-subtitle">Quản lý hồ sơ sinh viên</p>
+        </div>
+
+        <!-- ADD FORM -->
+        <div class="card">
+            <div class="card-label">Thêm sinh viên mới</div>
+            <form action="/api/students-db-add" method="post">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="student_id">Mã sinh viên</label>
+                        <input id="student_id" name="student_id" placeholder="VD: SV2024001" required>
+                    </div>
+                    <div class="field">
+                        <label for="fullname">Họ và tên</label>
+                        <input id="fullname" name="fullname" placeholder="Nguyễn Văn A" required>
+                    </div>
+                    <div class="field">
+                        <label for="dob">Ngày sinh</label>
+                        <input id="dob" name="dob" placeholder="DD/MM/YYYY" required>
+                    </div>
+                    <div class="field">
+                        <label for="major">Chuyên ngành</label>
+                        <input id="major" name="major" placeholder="VD: Công nghệ thông tin" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-add">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    Thêm sinh viên
+                </button>
+            </form>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-card">
+            <div class="table-toolbar">
+                <span class="table-toolbar-title">Danh sách sinh viên</span>
+                <span class="table-count" id="student-count">{{ data|length }} sinh viên</span>
+            </div>
+
+            {% if data %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Mã SV</th>
+                        <th>Họ và tên</th>
+                        <th>Ngày sinh</th>
+                        <th>Chuyên ngành</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in data %}
+                    <tr>
+                        <td><span class="cell-id">{{ loop.index }}</span></td>
+                        <td><span class="cell-student-id">{{ s.student_id }}</span></td>
+                        <td><span class="cell-name">{{ s.fullname }}</span></td>
+                        <td><span class="cell-dob">{{ s.dob }}</span></td>
+                        <td><span class="cell-major">{{ s.major }}</span></td>
+                        <td>
+                            <div class="cell-actions">
+                                <button class="btn-edit"
+                                    onclick="openEdit({{ s.id }}, '{{ s.student_id }}', '{{ s.fullname }}', '{{ s.dob }}', '{{ s.major }}')">Sửa</button>
+                                <button class="btn-delete" onclick="deleteStudent({{ s.id }})">Xoá</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">
+                <div class="empty-icon">🎓</div>
+                <p class="empty-text">Chưa có sinh viên nào</p>
+                <p class="empty-sub">Thêm sinh viên đầu tiên bằng form phía trên</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </main>
+
+    <!-- EDIT MODAL -->
+    <div class="modal-overlay" id="editModal" onclick="handleOverlayClick(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">Chỉnh sửa sinh viên</div>
+                    <div class="modal-student-id" id="modalStudentIdLabel"></div>
+                </div>
+                <button class="modal-close" onclick="closeEdit()">✕</button>
+            </div>
+
+            <div class="field">
+                <label for="edit_student_id">Mã sinh viên</label>
+                <input id="edit_student_id" placeholder="Mã sinh viên">
+            </div>
+            <div class="field">
+                <label for="edit_fullname">Họ và tên</label>
+                <input id="edit_fullname" placeholder="Họ và tên">
+            </div>
+            <div class="field">
+                <label for="edit_dob">Ngày sinh</label>
+                <input id="edit_dob" placeholder="DD/MM/YYYY">
+            </div>
+            <div class="field">
+                <label for="edit_major">Chuyên ngành</label>
+                <input id="edit_major" placeholder="Chuyên ngành">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeEdit()">Huỷ</button>
+                <button class="btn-save" onclick="saveEdit()">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── FLATPICKR ──
+        flatpickr("#dob", {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            locale: { firstDayOfWeek: 1 }
+        });
+
+        let editDobPicker = flatpickr("#edit_dob", {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            locale: { firstDayOfWeek: 1 }
+        });
+
+        // ── MODAL STATE ──
+        let currentEditId = null;
+
+        function openEdit(id, studentId, fullname, dob, major) {
+            currentEditId = id;
+            document.getElementById("modalStudentIdLabel").textContent = "Mã SV: " + studentId;
+            document.getElementById("edit_student_id").value = studentId;
+            document.getElementById("edit_fullname").value = fullname;
+            document.getElementById("edit_major").value = major;
+            editDobPicker.setDate(dob, true, "Y-m-d");
+            document.getElementById("editModal").classList.add("active");
+            document.body.style.overflow = "hidden";
+            setTimeout(() => document.getElementById("edit_fullname").focus(), 250);
+        }
+
+        function closeEdit() {
+            document.getElementById("editModal").classList.remove("active");
+            document.body.style.overflow = "";
+            currentEditId = null;
+        }
+
+        function handleOverlayClick(e) {
+            if (e.target === document.getElementById("editModal")) closeEdit();
+        }
+
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") closeEdit();
+        });
+
+        // ── SAVE ──
+        function saveEdit() {
+            if (!currentEditId) return;
+            const payload = {
+                student_id: document.getElementById("edit_student_id").value.trim(),
+                fullname: document.getElementById("edit_fullname").value.trim(),
+                dob: editDobPicker.selectedDates[0]
+                    ? editDobPicker.selectedDates[0].toISOString().slice(0, 10)
+                    : "",
+                major: document.getElementById("edit_major").value.trim()
+            };
+            if (!payload.fullname || !payload.major) {
+                alert("Vui lòng điền đầy đủ thông tin.");
+                return;
+            }
+            const btn = document.querySelector(".btn-save");
+            btn.textContent = "Đang lưu…";
+            btn.disabled = true;
+            fetch("/api/students-db/update/" + currentEditId, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+                .then(() => { closeEdit(); location.reload(); })
+                .catch(() => { btn.textContent = "Lưu thay đổi"; btn.disabled = false; alert("Lỗi khi lưu."); });
+        }
+
+        // ── DELETE ──
+        function deleteStudent(id) {
+            if (!confirm("Xác nhận xoá sinh viên này?")) return;
+            fetch("/api/students-db/delete/" + id, { method: "POST" })
+                .then(() => location.reload());
+        }
+    </script>
+
+</body>
+
+</html>

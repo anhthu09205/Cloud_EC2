@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Server 1</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #000;
+    color: white;
+}
+
+/* HERO OMBRE */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0071e3, #00c6ff);
+    text-align: center;
+}
+
+/* TEXT */
+.hero h1 {
+    font-size: 60px;
+    margin: 0;
+    letter-spacing: -1px;
+}
+
+.server {
+    font-size: 22px;
+    margin-top: 10px;
+    opacity: 0.9;
+}
+
+/* GLASS CARD */
+.card {
+    margin-top: 40px;
+    padding: 25px 40px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+    <h1>MyMiniCloud</h1>
+    <div class="server">SERVER 1</div>
+
+    <div class="card">
+        Request handled by Server 1
+    </div>
+</div>
+
+</body>
+</html>

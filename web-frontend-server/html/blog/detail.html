@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Detail</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary: #a1a1a6;
+      --accent: #0071e3;
+      --border: rgba(0, 0, 0, 0.08);
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      height: 52px;
+      background: rgba(245, 245, 247, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 17px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .nav-back {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .divider {
+            width: 48px;
+            height: 2px;
+            background: var(--border);
+            margin: 40px 0;
+        }
+
+    /* HERO */
+    .hero-img {
+      width: 100%;
+      height: min(60vh, 540px);
+      overflow: hidden;
+    }
+
+    .hero-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* CONTENT */
+    article {
+      max-width: 720px;
+      margin: auto;
+      padding: 56px 20px 80px;
+    }
+
+    .meta {
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 42px;
+      margin-bottom: 20px;
+    }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: var(--border);
+      margin: 30px 0;
+    }
+
+    .content p {
+      font-size: 17px;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .content h2 {
+      font-family: var(--font-display);
+      margin-top: 40px;
+    }
+
+    .content img {
+      max-width: 100%;
+      border-radius: 12px;
+    }
+
+    blockquote {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 30px 0;
+    }
+
+    /* BUTTONS */
+    .actions {
+      margin-top: 40px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .delete-btn,
+    .edit-btn {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .delete-btn {
+      background: #ff3b30;
+      color: white;
+    }
+
+    .edit-btn {
+      background: #ffd60a;
+    }
+
+    .meta-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(0, 113, 227, 0.08);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+
+    .meta-date {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      letter-spacing: -0.1px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a class="nav-logo" href="/">MyMiniCloud</a>
+    <a class="nav-back" href="/blog/">All Blogs</a>
+  </nav>
+
+  <!-- HERO -->
+  <div id="heroWrap" class="hero-img">
+    <img id="hero">
+  </div>
+
+  <!-- CONTENT -->
+  <article>
+
+    <div class="meta">
+      <span class="meta-tag">NEW BLOG</span>
+      <span class="meta-dot">-</span>
+      <span class="meta-date">Just now</span>
+    </div>
+
+    <h1 id="title"></h1>
+
+    <div class="divider"></div>
+
+    <div class="content" id="content"></div>
+
+    <div class="actions mt-4 d-flex gap-2">
+      <button class="btn btn-outline-danger btn-md" onclick="deleteBlog()">
+        Delete
+      </button>
+
+      <button class="btn btn-outline-primary btn-md" onclick="editBlog()">
+        Edit
+      </button>
+    </div>
+
+  </article>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+    let blogId = null;
+
+    async function loadBlog() {
+      const params = new URLSearchParams(window.location.search);
+      blogId = params.get("id");
+
+      try {
+        let res = await fetch("/api/blog?t=" + Date.now(), {
+          cache: "no-store"
+        });
+        let data = await res.json();
+        let b = data.find(x => x.id == blogId);
+
+        if (!b) return;
+
+        document.getElementById("title").innerText = b.title;
+        document.getElementById("content").innerHTML = marked.parse(b.content);
+
+        const imgEl = document.getElementById("hero");
+        const wrapEl = document.getElementById("heroWrap");
+
+        if (b.hero && b.hero.trim() !== "") {
+          wrapEl.style.display = "block";
+          imgEl.src = b.hero;
+
+          imgEl.onerror = () => {
+            wrapEl.style.display = "none";
+          };
+        } else {
+          wrapEl.style.display = "none";
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function deleteBlog() {
+      if (!confirm("Delete this blog?")) return;
+
+      await fetch("/api/blog/" + blogId, {
+        method: "DELETE"
+      });
+
+      window.location.href = "/blog/";
+    }
+
+    function editBlog() {
+      window.location.href = "/blog/create.html?id=" + blogId;
+    }
+
+    loadBlog();
+  </script>
+
+</body>
+
+</html>
