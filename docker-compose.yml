@@ -169,7 +169,7 @@ services:
 
 # extend
   web-frontend-server1:
-    image: ngthu/web:dev
+    image: nginx:alpine
     container_name: web-frontend-server1
     volumes:
       - ./web-frontend-server1/html:/usr/share/nginx/html
@@ -177,7 +177,7 @@ services:
       - cloud-net
 
   web-frontend-server2:
-    image: ngthu/web:dev
+    image: nginx:alpine
     container_name: web-frontend-server2
     volumes:
       - ./web-frontend-server2/html:/usr/share/nginx/html
