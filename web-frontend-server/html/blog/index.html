@@ -656,7 +656,7 @@
         else if (i % 3 === 1) type = "card-side";
 
         grid.insertAdjacentHTML("afterbegin", `
-      <a class="card ${type}" href="/blog/detail.html?id=${b.id}">
+      <a class="card ${type}" href="/blog/detail.html?id=${b.id}" style="opacity:0">
         
         ${b.hero ? `
         <div class="card-art">
@@ -682,6 +682,15 @@
 
       </a>
     `);
+
+        // Fix Safari: force reflow rồi trigger animation
+        const newCard = grid.firstElementChild;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            newCard.style.opacity = "";
+            newCard.style.animation = "fadeUp 0.6s ease forwards";
+          });
+        });
       });
     }
 

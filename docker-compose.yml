@@ -28,6 +28,8 @@ services:
           - app-server
     ports:
       - "8085:8081"
+    volumes:
+      - ./application-backend-server/blogs.json:/app/blogs.json
     environment:
       OIDC_ISSUER: "http://authentication-identity-server:8080/realms/realm_523H0100"
       OIDC_AUDIENCE: "account"
@@ -167,7 +169,7 @@ services:
 
 # extend
   web-frontend-server1:
-    image: nginx:alpine
+    image: lenhathuy/web:dev
     container_name: web-frontend-server1
     volumes:
       - ./web-frontend-server1/html:/usr/share/nginx/html
@@ -175,7 +177,7 @@ services:
       - cloud-net
 
   web-frontend-server2:
-    image: nginx:alpine
+    image: lenhathuy/web:dev
     container_name: web-frontend-server2
     volumes:
       - ./web-frontend-server2/html:/usr/share/nginx/html
