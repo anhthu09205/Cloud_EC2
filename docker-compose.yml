@@ -20,7 +20,7 @@ services:
 
   application-backend-server:
     build: ./application-backend-server
-    image: ngthu/app:dev
+    image: lenhathuy/app:dev
     container_name: application-backend-server
     networks: 
       cloud-net:
@@ -169,7 +169,7 @@ services:
 
 # extend
   web-frontend-server1:
-    image: lenhathuy/web:dev
+    image: ngthu/web:dev
     container_name: web-frontend-server1
     volumes:
       - ./web-frontend-server1/html:/usr/share/nginx/html
@@ -177,7 +177,7 @@ services:
       - cloud-net
 
   web-frontend-server2:
-    image: lenhathuy/web:dev
+    image: ngthu/web:dev
     container_name: web-frontend-server2
     volumes:
       - ./web-frontend-server2/html:/usr/share/nginx/html
