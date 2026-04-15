@@ -23,8 +23,65 @@ def get_jwks():
 app = Flask(__name__)
 app.json.ensure_ascii = False
 
+from flask import request, jsonify, Response
+
 @app.get("/hello")
-def hello(): return jsonify(message="Hello from App Server!")
+def hello():
+    data = {"message": "Hello teacher Bui Quy Anh!"}
+
+    # nếu browser → trả HTML
+    if "text/html" in request.headers.get("Accept", ""):
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Hello API</title>
+            <style>
+                body {{
+                    font-family: 'Segoe UI', Arial;
+                    background: linear-gradient(135deg, #eef2f3, #dfe9f3);
+                    padding: 50px;
+                    text-align: center;
+                }}
+
+                .card {{
+                    background: white;
+                    padding: 40px;
+                    border-radius: 15px;
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+                    display: inline-block;
+                }}
+
+                h1 {{
+                    color: #2c3e50;
+                    margin-bottom: 10px;
+                }}
+
+                .message {{
+                    font-size: 18px;
+                    color: #27ae60;
+                    margin: 15px 0;
+                }}
+
+                .sub {{
+                    color: #7f8c8d;
+                    font-size: 14px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <h1>Welcome to MyMiniCloud 🚀</h1>
+                <div class="message">{data["message"]}</div>
+                <div class="sub">Our backend service is up and running</div>
+            </div>
+        </body>
+        </html>
+        """
+
+    # nếu API → trả JSON
+    return jsonify(data)
+
 
 @app.get("/secure")
 def secure():
