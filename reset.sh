@@ -1,4 +1,3 @@
-
 #!/bin/bash
 echo "Dừng toàn bộ container đang chạy..."
 docker ps -q | grep -q . && docker stop $(docker ps -q)
