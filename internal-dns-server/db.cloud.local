@@ -12,6 +12,6 @@ $ORIGIN cloud.local.
 
 ns  IN A    127.0.0.1
 web-frontend-server IN A 10.10.10.10
-app-backend    IN    A    172.18.0.9
-minio          IN    A    172.18.0.3
-keycloak       IN    A    172.18.0.6
+app-backend    IN    A    172.18.0.10
+minio          IN    A    172.18.0.9
+keycloak       IN    A    172.18.0.8

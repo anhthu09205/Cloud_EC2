@@ -199,10 +199,12 @@ def student():
     with open("students.json", encoding="utf-8") as f:
         data = json.load(f)
 
-    return Response(
-        json.dumps(data, ensure_ascii=False),
-        content_type="application/json; charset=utf-8"
-    )
+    # nếu browser → HTML
+    if "text/html" in request.headers.get("Accept", ""):
+        return render_template("student_json.html", data=data)
+
+    # nếu API → JSON
+    return jsonify(data)
 
 @app.get("/student/view")
 def student_view():
